@@ -26,7 +26,7 @@ for cmd in insts:
       of '.':
         vm.printMem()
       else:
-        break
+        continue
   except SystemError:
     echo "Runtime error"
     break
