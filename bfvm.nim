@@ -17,4 +17,31 @@ proc movePtr*(vm: var VM, offset: int): void=
   vm.idx += offset
 
 proc printMem*(vm: var VM): void =
-  echo char(vm.mem[vm.idx])
+  stdout.write(char(vm.mem[vm.idx]))
+
+proc execute*(vm: var VM, insts: string): int =
+  for i, cmd in insts:
+    try:
+      case cmd:
+        of '+':
+          vm.addMem()
+        of '-':
+          vm.subMem()
+        of '<':
+          vm.movePtr(-1)
+        of '>':
+          vm.movePtr(1)
+        of '.':
+          vm.printMem()
+        of '[':
+          var pair : int
+          while vm.mem[vm.idx] != 0:
+            pair = vm.execute(insts[(i+1)..(-1)])
+          return vm.execute(insts[(i+pair+2)..(-1)])
+        of ']':
+          return i
+        else:
+          continue
+    except SystemError:
+      echo "Runtime error"
+      break

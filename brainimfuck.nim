@@ -10,23 +10,4 @@ while true:
   except IOError:
     break
 
-echo insts
-
-for cmd in insts:
-  try:
-    case cmd:
-      of '+':
-        vm.addMem()
-      of '-':
-        vm.subMem()
-      of '<':
-        vm.movePtr(-1)
-      of '>':
-        vm.movePtr(1)
-      of '.':
-        vm.printMem()
-      else:
-        continue
-  except SystemError:
-    echo "Runtime error"
-    break
+discard vm.execute(insts)
