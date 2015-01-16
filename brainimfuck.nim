@@ -13,21 +13,20 @@ while true:
 echo insts
 
 for cmd in insts:
-  case cmd:
-    of '+':
-      vm.addMem()
-    of '-':
-      vm.subMem()
-    of '<':
-      if vm.movePtr(-1) == -1:
-        echo "Runtime error"
+  try:
+    case cmd:
+      of '+':
+        vm.addMem()
+      of '-':
+        vm.subMem()
+      of '<':
+        vm.movePtr(-1)
+      of '>':
+        vm.movePtr(1)
+      of '.':
+        vm.printMem()
+      else:
         break
-    of '>':
-      if vm.movePtr(1) == -1:
-        echo "Runtime error"
-        break
-    of '.':
-      vm.printMem()
-    else:
-      echo "Syntax error"
-      break
+  except SystemError:
+    echo "Runtime error"
+    break
