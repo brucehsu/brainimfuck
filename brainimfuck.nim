@@ -14,5 +14,6 @@ while true:
   except IOError:
     break
 
-let root = compile(insts)
+var root = compile(insts)
+root.optimize()
 vm.execute(root)

@@ -1,6 +1,6 @@
 type 
   NodeType* = enum
-    NODE_ROOT, NODE_MOV, NODE_ADD, NODE_PRINT, NODE_LOOP
+    NODE_ROOT, NODE_MOV, NODE_ADD, NODE_PRINT, NODE_LOOP, NODE_SET
   AST* = ref ASTObj
   ASTObj = object
     node_type* : NodeType
@@ -63,3 +63,20 @@ proc compile*(insts : string): AST=
     except SystemError:
       echo "Runtime error"
       break
+
+# Optimize [-] into = 0
+proc optimizeSubtractionToZero(root: var AST): void = 
+  var node = root
+  while node != nil:
+    if node.node_type == NODE_LOOP:
+      let child = node.child.next
+      if child.next == nil and child.node_type == NODE_ADD and child.node_val == -1:
+        node.node_type = NODE_SET
+        node.node_val = 0
+        node.child = nil
+      else:
+        node.child.optimizeSubtractionToZero()
+    node = node.next
+
+proc optimize*(root: var AST): void = 
+  root.optimizeSubtractionToZero()
