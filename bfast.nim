@@ -91,6 +91,20 @@ proc optimizeMoveToNonzero(root: var AST): void =
         node.child.optimizeMoveToNonzero()
     node = node.next
 
+# Optimize [-]+++++ into a single SET instruction
+proc optimizeAssignment(root: var AST): void =
+  var node = root
+  while node != nil:
+    if node.node_type == NODE_SET:
+      let next = node.next
+      if node.node_val == 0 and next != nil and next.node_type == NODE_ADD:
+        node.node_val = next.node_val
+        node.next = next.next
+    elif node.node_type == NODE_LOOP:
+      node.child.optimizeAssignment()
+    node = node.next
+
 proc optimize*(root: var AST): void = 
   root.optimizeSubtractionToZero()
   root.optimizeMoveToNonzero()
+  root.optimizeAssignment()
