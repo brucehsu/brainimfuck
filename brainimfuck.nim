@@ -1,7 +1,11 @@
 import bfvm
+import bfast
 var
   insts : string = ""
-  vm = VM(mem: newSeq[int](1))
+  vm : VM
+new(vm)
+vm.mem.newSeq(1)
+vm.idx = 0
 
 while true:
   try:
@@ -10,4 +14,5 @@ while true:
   except IOError:
     break
 
-discard vm.execute(insts)
+let root = compile(insts)
+vm.execute(root)
