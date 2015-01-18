@@ -37,6 +37,9 @@ proc execute*(vm: var VM, root: AST): void =
           vm.execute(node.child)
       of NODE_SET:
         vm.mem[vm.idx] = node.node_val
+      of NODE_MOV_NONZERO:
+        while vm.mem[vm.idx]!=0:
+          vm.movePtr(node.node_val)
       else:
         raise newException(SystemError, "Unexpected instructions")
     node = node.next

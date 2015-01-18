@@ -1,6 +1,6 @@
 type 
   NodeType* = enum
-    NODE_ROOT, NODE_MOV, NODE_ADD, NODE_PRINT, NODE_LOOP, NODE_SET
+    NODE_ROOT, NODE_MOV, NODE_ADD, NODE_PRINT, NODE_LOOP, NODE_SET, NODE_MOV_NONZERO
   AST* = ref ASTObj
   ASTObj = object
     node_type* : NodeType
@@ -78,5 +78,19 @@ proc optimizeSubtractionToZero(root: var AST): void =
         node.child.optimizeSubtractionToZero()
     node = node.next
 
+# Optimize [>], [<<] into a single instruction
+proc optimizeMoveToNonzero(root: var AST): void =
+  var node = root
+  while node != nil:
+    if node.node_type == NODE_LOOP:
+      let child = node.child.next
+      if child.next == nil and child.node_type == NODE_MOV:
+        node.node_type = NODE_MOV_NONZERO
+        node.node_val = child.node_val
+      else:
+        node.child.optimizeMoveToNonzero()
+    node = node.next
+
 proc optimize*(root: var AST): void = 
   root.optimizeSubtractionToZero()
+  root.optimizeMoveToNonzero()
