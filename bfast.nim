@@ -29,13 +29,25 @@ proc compile*(insts : string): AST=
     try:
       case cmd:
         of '+':
-          node = node.appendNode(newNode(NODE_ADD, 1))
+          if node.node_type == NODE_ADD:
+            node.node_val.inc()
+          else:
+            node = node.appendNode(newNode(NODE_ADD, 1))
         of '-':
-          node = node.appendNode(newNode(NODE_ADD, -1))
+          if node.node_type == NODE_ADD:
+            node.node_val.dec()
+          else:
+            node = node.appendNode(newNode(NODE_ADD, -1))
         of '<':
-          node = node.appendNode(newNode(NODE_MOV, -1))
+          if node.node_type == NODE_MOV:
+            node.node_val.dec()
+          else:
+            node = node.appendNode(newNode(NODE_MOV, -1))
         of '>':
-          node = node.appendNode(newNode(NODE_MOV, 1))
+          if node.node_type == NODE_MOV:
+              node.node_val.inc()
+          else:
+            node = node.appendNode(newNode(NODE_MOV, 1))
         of '.':
           node = node.appendNode(newNode(NODE_PRINT, 0))
         of '[':
