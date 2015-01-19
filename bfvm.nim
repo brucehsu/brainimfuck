@@ -11,8 +11,7 @@ proc addMem*(vm: var VM, val: int): void =
 
 proc movePtr*(vm: var VM, offset: int): void=
   if vm.idx + offset >= vm.mem.len():
-    for i in countup(0, ((vm.idx + offset + 1) - vm.mem.len())):
-      vm.mem.add(0)
+    vm.mem.setLen(vm.mem.len() + offset*2)
   elif vm.idx + offset < 0:
     raise newException(SystemError, "Invalid pointer access")
   vm.idx += offset
